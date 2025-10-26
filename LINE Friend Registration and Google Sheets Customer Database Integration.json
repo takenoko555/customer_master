@@ -1,0 +1,651 @@
+{
+  "name": "LINE Friend Registration and Google Sheets Customer Database Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "line-webhook",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "426368a4-ab3d-470f-8699-ed5162411f57",
+      "name": "LINE Friend Added Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1600,
+        1840
+      ],
+      "webhookId": "4eb79a33-9155-47df-829f-5f236251a6d9"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "google-form-submission",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "aaa861c3-30c1-4eb8-ab1b-3911f49d59d9",
+      "name": "Google Form Submission Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1600,
+        2256
+      ],
+      "webhookId": "8778c5d3-8446-428a-bf2e-4b04c40d2fda"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0d73d4cb-bccf-4455-82cb-2e719966c3cd",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "userId",
+              "value": "={{$json[\"body\"][\"events\"][0][\"source\"][\"userId\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "displayName",
+              "value": "={{ $json.body.displayName }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "timestamp",
+              "value": "={{$json[\"body\"][\"events\"][0][\"timestamp\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "createdAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "efff96e8-d2e3-4f93-8e10-e18ec07566ac",
+      "name": "Prepare Friend Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1824,
+        1840
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "userId",
+              "value": "={{ $json.body.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "phone",
+              "value": "={{ $json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "company",
+              "value": "={{ $json.body.company }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "optIn",
+              "value": "={{ $json.body.optIn }}",
+              "type": "boolean"
+            },
+            {
+              "id": "id-6",
+              "name": "updatedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3a5dee95-0d72-414e-be72-050ef1a2919c",
+      "name": "Prepare Form Update Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1824,
+        2256
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "customer_master",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=userId",
+              "lookupValue": "={{ $('Prepare Friend Data').item.json.userId }}"
+            }
+          ]
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          },
+          "returnFirstMatch": true
+        }
+      },
+      "id": "2b243c4b-f178-45dc-8ec9-248a025dd296",
+      "name": "Check Existing User",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2272,
+        1840
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p8OozizTKv71HLR0",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Check Existing User').item.json.userId }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "797069fc-0e38-4082-8ed4-bb280ab3c4e3",
+      "name": "User Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2496,
+        1840
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1hCfvTV_HVWa1Zptq1CFXdZ4YmVPKtI81",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "customer_master",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "userId": "={{ $('Prepare Friend Data').item.json.userId }}",
+            "displayName": "={{ $('Prepare Friend Data').item.json.displayName }}",
+            "timestamp": "={{ $('Prepare Friend Data').item.json.timestamp }}",
+            "createdAt": "={{ $('Prepare Friend Data').item.json.createdAt }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "24601a5a-65b5-4801-8c66-0789baae8ed0",
+      "name": "Add New Friend",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2720,
+        1936
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p8OozizTKv71HLR0",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('Friend added successfully:', $input.item.json);\nreturn [$input.item];"
+      },
+      "id": "155d4704-52fa-4b6c-8869-3e06f867c104",
+      "name": "Log Friend Added",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        1936
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('User already exists:', $input.item.json.userId);\nreturn [$input.item];"
+      },
+      "id": "73c1ca8e-4d74-4e93-ba96-c0fc9bccddd5",
+      "name": "Log User Already Exists",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        1744
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1hCfvTV_HVWa1Zptq1CFXdZ4YmVPKtI81",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "customer_master",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=userId",
+              "lookupValue": "=Column: userId Operator: Equals Value: {{$json[\"userId\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1710085-c5f4-4e6f-b960-42427d9dd533",
+      "name": "Find User to Update",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2048,
+        2256
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p8OozizTKv71HLR0",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Find User to Update').item.json.row_number }}",
+              "operator": {
+                "type": "number",
+                "operation": "exists"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $('Find User to Update').item.json.row_number }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6d1e2243-8152-4d96-ae00-b2884cf7cf74",
+      "name": "User Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2272,
+        2256
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1ABC123example"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "friends"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Prepare Form Update Data').item.json.email }}",
+            "phone": "={{ $('Prepare Form Update Data').item.json.phone }}",
+            "company": "={{ $('Prepare Form Update Data').item.json.company }}",
+            "optIn": "={{ $('Prepare Form Update Data').item.json.optIn }}",
+            "updatedAt": "={{ $('Prepare Form Update Data').item.json.updatedAt }}"
+          },
+          "matchingColumns": [
+            "lineUserId"
+          ],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "optIn",
+              "displayName": "optIn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updatedAt",
+              "displayName": "updatedAt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "91fde924-8216-4f3f-985d-77af85e774aa",
+      "name": "Update User Info",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2496,
+        2160
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "y6ofeW0wLTVsf6U1",
+          "name": "gdrive-oauth-OLD"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('User info updated successfully:', $input.item.json);\nreturn [$input.item];"
+      },
+      "id": "5851d8b4-5c5e-4b26-aae2-f310f66c6085",
+      "name": "Log User Updated",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        2160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('User not found for update:', $('Prepare Form Update Data').item.json.userId);\nreturn [$input.item];"
+      },
+      "id": "1a15b572-a613-426f-8089-46bf4ed15ac4",
+      "name": "Log User Not Found",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2496,
+        2352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.line.me/v2/bot/profile/{{$json[\"body\"][\"events\"][0][\"source\"][\"userId\"]}}\n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer RHNyzBYunu2SL3Lhyjj/GZE3hM6JxmBqlT+aPmHRY2W9FjCIyA+a2e8Zm6IQSNUZZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEVNSB7mMDYQM7zWuEmqS2/r7NJO6FVRqgNTZcfMpYDTqAdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2048,
+        1840
+      ],
+      "id": "793a7bf7-27ab-49d2-9712-10e2091d07db",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Prepare Friend Data": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing User": {
+      "main": [
+        [
+          {
+            "node": "User Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Exists?": {
+      "main": [
+        [
+          {
+            "node": "Log User Already Exists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add New Friend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add New Friend": {
+      "main": [
+        [
+          {
+            "node": "Log Friend Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Form Submission Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Form Update Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Form Update Data": {
+      "main": [
+        [
+          {
+            "node": "Find User to Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find User to Update": {
+      "main": [
+        [
+          {
+            "node": "User Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Found?": {
+      "main": [
+        [
+          {
+            "node": "Update User Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log User Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update User Info": {
+      "main": [
+        [
+          {
+            "node": "Log User Updated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LINE Friend Added Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Friend Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Check Existing User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9003bc71-9a07-4382-a689-fa6aed84d1c6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7784e6deefc3643326da8d7ad131105e653e80f566fd6cf43823273619021196"
+  },
+  "id": "wbPxwsY2DnIGB6u7",
+  "tags": []
+}
