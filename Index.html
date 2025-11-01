@@ -1,0 +1,18 @@
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIFF Bridge</title>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head><body>
+<p>フォームを開いています…</p>
+<script>
+(async () => {
+  try {
+    await liff.init({ liffId: "2008365239-jgx0NEQ1" });
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbx4HsgUIkGm5gzXORYpKfFKXeO5CRsbDn2zah4uf3az-zmC1BhYNOCOhz6-f9HyGklY/exec";
+    liff.openWindow({ url: GAS_URL, external: true });
+  } catch (e) {
+    location.replace("https://script.google.com/macros/s/AKfycbx4HsgUIkGm5gzXORYpKfFKXeO5CRsbDn2zah4uf3az-zmC1BhYNOCOhz6-f9HyGklY/exec");
+  }
+})();
+</script>
+</body></html>
