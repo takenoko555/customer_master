@@ -1,22 +1,4 @@
-<!doctype html><html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<title>Bridge</title>
-</head><body>
-<script>
-(async () => {
-  try {
-    await liff.init({ liffId: '2008365239-jgx0NEQ1' });
-    // 外部ブラウザでフォームだけ開く（LIFF内での遷移は禁止）
-    liff.openWindow({
-      url: 'https://script.google.com/macros/s/AKfycbwXOXkWNKOLxKg3JDh5gw-uh5LrGoaGr11dxlM0QHxe-QpWHSfpDmoH3w_7iEoJc9am/exec',
-      external: true
-    });
-    // LIFFタブは役目が終わったので閉じる（閉じられない環境なら無視されます）
-    window.close();
-  } catch(e) {
-    document.body.textContent = '起動エラー: ' + (e?.message || e);
-  }
-})();
-</script>
-</body></html>
+<!doctype html>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbwXOXkWNKOLxKg3JDh5gw-uh5LrGoaGr11dxlM0QHxe-QpWHSfpDmoH3w_7iEoJc9am/exec">
+<title>Redirecting…</title>
