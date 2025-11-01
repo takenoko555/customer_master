@@ -1,24 +1,21 @@
 <!doctype html><html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LIFF Bridge</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<title>Bridge</title>
 </head><body>
-<p>フォームへ移動しています…</p>
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbx4HsgUIkGm5gzXORYpKfFKXeO5CRsbDn2zah4uf3az-zmC1BhYNOCOhz6-f9HyGklY/exec";
 (async () => {
   try {
-    await liff.init({ liffId: "2008365239-jgx0NEQ1" });
-    // LINEアプリ内なら「外部ブラウザで開く」
-    if (liff.isInClient()) {
-      liff.openWindow({ url: GAS_URL, external: true });
-    } else {
-      // 通常ブラウザは直リンク（ポップアップ不使用）
-      location.href = GAS_URL;
-    }
-  } catch (e) {
-    // LIFFが使えない環境でも必ず遷移
-    location.href = GAS_URL;
+    await liff.init({ liffId: '2008365239-jgx0NEQ1' });
+    // 外部ブラウザでフォームだけ開く（LIFF内での遷移は禁止）
+    liff.openWindow({
+      url: 'https://script.google.com/macros/s/AKfycbwXOXkWNKOLxKg3JDh5gw-uh5LrGoaGr11dxlM0QHxe-QpWHSfpDmoH3w_7iEoJc9am/exec',
+      external: true
+    });
+    // LIFFタブは役目が終わったので閉じる（閉じられない環境なら無視されます）
+    window.close();
+  } catch(e) {
+    document.body.textContent = '起動エラー: ' + (e?.message || e);
   }
 })();
 </script>
