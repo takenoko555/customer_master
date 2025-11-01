@@ -2,16 +2,28 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LIFF Bridge</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;text-align:center;margin:40px}
+  #go{display:inline-block;padding:14px 22px;font-size:18px;border:0;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+</style>
 </head><body>
-<p>フォームを開いています…</p>
+<p>外部ブラウザでフォームを開きます。</p>
+<button id="go">フォームを開く</button>
 <script>
 (async () => {
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbx4HsgUIkGm5gzXORYpKfFKXeO5CRsbDn2zah4uf3az-zmC1BhYNOCOhz6-f9HyGklY/exec";
+  const openForm = () => {
+    try { liff.openWindow({ url: GAS_URL, external: true }); }
+    catch (_) { location.href = GAS_URL; }
+  };
   try {
     await liff.init({ liffId: "2008365239-jgx0NEQ1" });
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbx4HsgUIkGm5gzXORYpKfFKXeO5CRsbDn2zah4uf3az-zmC1BhYNOCOhz6-f9HyGklY/exec";
-    liff.openWindow({ url: GAS_URL, external: true });
-  } catch (e) {
-    location.replace("https://script.google.com/macros/s/AKfycbx4HsgUIkGm5gzXORYpKfFKXeO5CRsbDn2zah4uf3az-zmC1BhYNOCOhz6-f9HyGklY/exec");
+    // LIFF内は自動起動でOK／通常ブラウザはボタン押下で起動（ポップアップ対策）
+    if (liff.isInClient()) openForm();
+    document.getElementById("go").addEventListener("click", openForm);
+  } catch (_) {
+    // LIFF初期化に失敗したら直接遷移
+    location.href = GAS_URL;
   }
 })();
 </script>
