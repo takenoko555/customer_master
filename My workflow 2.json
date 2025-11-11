@@ -1,0 +1,1056 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "list",
+          "cachedResultName": "顧客台帳",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1387568918,
+          "mode": "list",
+          "cachedResultName": "フォームの回答 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess/edit#gid=1387568918"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "4d79b9e0-3f09-479f-a50f-b97306a39c2d",
+      "name": "Trigger：Google Form",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        784,
+        3984
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "gOsOVkaA6tsdF9Ii",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "line/webhook",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        3792
+      ],
+      "id": "a4357f8c-19f4-47e9-95ba-0e5863a2f6bf",
+      "name": "LINE Webhook",
+      "webhookId": "44db7fa5-169d-439d-9c7a-fd378673df4a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer HIbgUTGuBeUI0Y8ox8RZ7mJwsHymi2UDb7gjMqEZpsrrOfcJCNya9YJJ149Yc6ILZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXqQJLdHh6xf5/4PyWuwmf1CmPQTiy0h6MfhwtucQXaTgdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{$json.userId}}\",\n  \"messages\": [\n    { \"type\": \"text\", \"text\": \"{{ $json.formUrl }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2272,
+        3888
+      ],
+      "id": "77eb9b50-5b9d-4b55-9a74-4b915e062d40",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40605dc9-707e-4244-9c3c-9e900bc5bd78",
+              "name": "userId",
+              "value": "={{$json.userId}}",
+              "type": "string"
+            },
+            {
+              "id": "82cfe29d-5590-42f8-83a4-590f6d91b2b7",
+              "name": "displayName",
+              "value": "={{$json.displayName}}",
+              "type": "string"
+            },
+            {
+              "id": "f571ec00-12e5-4a35-9b7b-57a46771b8a9",
+              "name": "pictureUrl",
+              "value": "={{ $json.pictureUrl || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "32c3ab13-48f3-4d26-b63e-cb0042cd7095",
+              "name": "language",
+              "value": "={{ $json.language || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "ab1b6e1f-c096-4438-ae26-cf0271842c1f",
+              "name": "createdAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "e4bb7202-b4ea-4aa2-a9ce-3b70249495d5",
+              "name": "updatedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "d03d688d-13d9-4f2c-ad74-f22a70b88576",
+              "name": "note",
+              "value": "={{ '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1136,
+        3600
+      ],
+      "id": "a6c87f23-9bd3-4fd9-b9ce-f2aca839239a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "customer_master",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "displayName": "={{$json.displayName}}",
+            "updatedAt": "={{$now}}",
+            "userId": "={{$json.userId}}"
+          },
+          "matchingColumns": [
+            "userId"
+          ],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "displayName",
+              "displayName": "displayName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lineStatus",
+              "displayName": "lineStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "furigana",
+              "displayName": "furigana",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "lastBookingAt",
+              "displayName": "lastBookingAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nextBookingAt",
+              "displayName": "nextBookingAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "lastContactAt",
+              "displayName": "lastContactAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updatedAt",
+              "displayName": "updatedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "prefecture",
+              "displayName": "prefecture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "occupation",
+              "displayName": "occupation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "optin",
+              "displayName": "optin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "raw",
+              "displayName": "raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        3600
+      ],
+      "id": "c6de5f75-7f3b-4cd8-8c7c-75aa72062216",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "line/friend-added-mvp",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        3600
+      ],
+      "id": "9b5b3f61-11bc-4526-ba1f-45fb6ea3fd22",
+      "name": "LINE Friend Added Webhook (MVP)",
+      "webhookId": "1d09ccd6-90a4-43b9-ad8e-2838614a3ee5"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.line.me/v2/bot/profile/{{ $json.body.events[0].source.userId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer S5dQF+pyYvAn9Hi04eavhrNme1XKXOUzG2tpXL+q784whxZ1ZT3hx1Bx5yYS1MKiZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXAwA3pb/VAD5b49d75uH1unbTz6LcchfCPBCHQX1UomgdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        3600
+      ],
+      "id": "5e539e84-5b4f-4be2-b014-2a0bbe254259",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "フォームの回答 1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "電話番号": "={{ $json['電話番号'] }}"
+          },
+          "matchingColumns": [
+            "電話番号"
+          ],
+          "schema": [
+            {
+              "id": "タイムスタンプ",
+              "displayName": "タイムスタンプ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "名前",
+              "displayName": "名前",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "フリガナ",
+              "displayName": "フリガナ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "電話番号",
+              "displayName": "電話番号",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "お住まいの地域",
+              "displayName": "お住まいの地域",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "職業",
+              "displayName": "職業",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "その他を選択された方はこちらにご記入ください。",
+              "displayName": "その他を選択された方はこちらにご記入ください。",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ご相談内容",
+              "displayName": "ご相談内容",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "メールアドレス",
+              "displayName": "メールアドレス",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "受付番号（joinKey）（説明：自動入力。編集不要）  ",
+              "displayName": "受付番号（joinKey）（説明：自動入力。編集不要）  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        960,
+        3984
+      ],
+      "id": "4757435e-8bdb-4367-9a31-01366681b686",
+      "name": "upsert_master",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b29946-9721-4e34-9deb-9c7f6cd8790c",
+              "leftValue": "={{$items('customer_get').length}}",
+              "rightValue": "={{ 0 }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        3792
+      ],
+      "id": "f4fc7099-cfd4-4539-a20b-2d7483be9bde",
+      "name": "IF: 初回登録?"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "form_entries",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{$node[\"LINE Webhook\"].json.body.events[0].source.userId}}",
+            "firstRegisteredAt": "={{ $json.firstRegisteredAt || $now }}",
+            "lastRegisteredAt": "={{ $json.now }}",
+            "firstMessage": "={{ $json.firstRegisteredAt || $json.now }}",
+            "source": "line",
+            "raw": "={{ JSON.stringify($node[\"LINE Webhook\"].json.body.events[0]) }}"
+          },
+          "matchingColumns": [
+            "userId"
+          ],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "firstRegisteredAt",
+              "displayName": "firstRegisteredAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastRegisteredAt",
+              "displayName": "lastRegisteredAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "firstMessage",
+              "displayName": "firstMessage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw",
+              "displayName": "raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        3888
+      ],
+      "id": "6ffc7d3d-fd72-400d-83a8-ff84436288c4",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b29946-9721-4e34-9deb-9c7f6cd8790c",
+              "leftValue": "={{ $json.firstRegisteredAt ?? '' }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1536,
+        3888
+      ],
+      "id": "98734f98-ccd0-47a9-92cc-c058dd2ee59d",
+      "name": "IF: 新規?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eda447ff-d9a8-4f6c-8d3a-91e15b491c2d",
+              "name": "now",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "35706d1d-f772-416b-b43f-1983bea5f775",
+              "name": "userId",
+              "value": "={{ $('LINE Webhook').item.json.body.events[0].source.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "ad7c6ec9-21e9-48fa-bae3-8326c80df0c7",
+              "name": "joinKey",
+              "value": "=$uuid()",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        3904
+      ],
+      "id": "8dd1171b-1e25-443c-ade2-e6cf61cba920",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=customer_master",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "userId",
+              "lookupValue": "={{$json.body.events[0].source.userId}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        3792
+      ],
+      "id": "f7626d08-7c77-41ee-87b7-90b10bc945c1",
+      "name": "customer_get",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f460e63-9cf7-47dc-b53c-f0479b5d543f",
+              "name": "formUrl",
+              "value": "=={{ 'https://docs.google.com/forms/d/e/FAIpQLScSSX0ETDLFrnUql2vrLyoY_pJFBAMnPosnYYMd4K3IGBwvD9/viewform?usp=pp_url&entry.1136694628=' + $json.joinKey }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1904,
+        3904
+      ],
+      "id": "bf4d03fd-c155-4626-b095-f4b339f65ffb",
+      "name": "build_form_url"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34626891-69b2-4287-9d11-b7455b0c5168",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2064,
+        3904
+      ],
+      "id": "5a98ca0b-f1d3-4e37-9b1a-845d0794fd14",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger：Google Form": {
+      "main": [
+        [
+          {
+            "node": "upsert_master",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LINE Webhook": {
+      "main": [
+        [
+          {
+            "node": "customer_get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LINE Friend Added Webhook (MVP)": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: 初回登録?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "IF: 新規?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: 新規?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "build_form_url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer_get": {
+      "main": [
+        [
+          {
+            "node": "IF: 初回登録?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build_form_url": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9816c289-0779-4727-8b4c-d41e35b8464a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7784e6deefc3643326da8d7ad131105e653e80f566fd6cf43823273619021196"
+  },
+  "id": "rR7x6LodNvx2y0aA",
+  "tags": []
+}
