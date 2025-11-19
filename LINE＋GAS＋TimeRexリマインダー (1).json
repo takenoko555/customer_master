@@ -1,0 +1,2079 @@
+{
+  "name": "LINE＋GAS＋TimeRexリマインダー",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "list",
+          "cachedResultName": "顧客台帳",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1387568918,
+          "mode": "list",
+          "cachedResultName": "フォームの回答 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess/edit#gid=1387568918"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "4d79b9e0-3f09-479f-a50f-b97306a39c2d",
+      "name": "Trigger：Google Form",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        512,
+        3520
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "gOsOVkaA6tsdF9Ii",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "line/webhook",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        4080
+      ],
+      "id": "a4357f8c-19f4-47e9-95ba-0e5863a2f6bf",
+      "name": "LINE Webhook",
+      "webhookId": "44db7fa5-169d-439d-9c7a-fd378673df4a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer HIbgUTGuBeUI0Y8ox8RZ7mJwsHymi2UDb7gjMqEZpsrrOfcJCNya9YJJ149Yc6ILZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXqQJLdHh6xf5/4PyWuwmf1CmPQTiy0h6MfhwtucQXaTgdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2704,
+        4080
+      ],
+      "id": "77eb9b50-5b9d-4b55-9a74-4b915e062d40",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "customer_master",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{ $('merge_form_and_lif').item.json.userId }}",
+            "displayName": "={{ $('merge_form_and_lif').item.json.name }}",
+            "email": "={{ $('merge_form_and_lif').item.json.email }}",
+            "phone": "={{ $('merge_form_and_lif').item.json.phone }}",
+            "company": "={{ $('merge_form_and_lif').item.json.occupation }}",
+            "furigana": "={{ $('merge_form_and_lif').item.json.furigana }}",
+            "message": "={{ $('merge_form_and_lif').item.json.message }}",
+            "joinKey": "={{ $json.joinKey }}",
+            "prefecture": "={{ $('merge_form_and_lif').item.json.prefecture }}",
+            "source": "={{ $('merge_form_and_lif').item.json.source }}",
+            "raw": "={{ $('form_liff1').item.json.raw }}",
+            "otherOption": "={{ $('merge_form_and_lif').item.json.otherOption }}",
+            "createdAt": "={{ $('form_liff1').item.json.issuedAt }}"
+          },
+          "matchingColumns": [
+            "userId"
+          ],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "displayName",
+              "displayName": "displayName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lineStatus",
+              "displayName": "lineStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "furigana",
+              "displayName": "furigana",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastBookingAt",
+              "displayName": "lastBookingAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nextBookingAt",
+              "displayName": "nextBookingAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastContactAt",
+              "displayName": "lastContactAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updatedAt",
+              "displayName": "updatedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "prefecture",
+              "displayName": "prefecture",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "occupation",
+              "displayName": "occupation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "optin",
+              "displayName": "optin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw",
+              "displayName": "raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "joinKey",
+              "displayName": "joinKey",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "otherOption",
+              "displayName": "otherOption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1248,
+        3520
+      ],
+      "id": "4757435e-8bdb-4367-9a31-01366681b686",
+      "name": "upsert_master",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b29946-9721-4e34-9deb-9c7f6cd8790c",
+              "leftValue": "={{ $node[\"customer_get\"].json[\"userid\"] || \"\" }}",
+              "rightValue": "={{ 0 }}",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        4064
+      ],
+      "id": "f4fc7099-cfd4-4539-a20b-2d7483be9bde",
+      "name": "IF: 初回登録?"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "form_entries",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{$node[\"LINE Webhook\"].json.body.events[0].source.userId}}",
+            "firstRegisteredAt": "={{ $json.firstRegisteredAt || $now }}",
+            "lastRegisteredAt": "={{ $json.now }}",
+            "firstMessage": "={{ $json.firstRegisteredAt || $json.now }}",
+            "source": "line",
+            "raw": "={{ JSON.stringify($node[\"LINE Webhook\"].json.body.events[0]) }}"
+          },
+          "matchingColumns": [
+            "userId"
+          ],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "firstRegisteredAt",
+              "displayName": "firstRegisteredAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastRegisteredAt",
+              "displayName": "lastRegisteredAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "firstMessage",
+              "displayName": "firstMessage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw",
+              "displayName": "raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1376,
+        4080
+      ],
+      "id": "6ffc7d3d-fd72-400d-83a8-ff84436288c4",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7b29946-9721-4e34-9deb-9c7f6cd8790c",
+              "leftValue": "={{ $json.firstRegisteredAt ?? '' }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        4080
+      ],
+      "id": "98734f98-ccd0-47a9-92cc-c058dd2ee59d",
+      "name": "IF: 新規?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eda447ff-d9a8-4f6c-8d3a-91e15b491c2d",
+              "name": "now",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "35706d1d-f772-416b-b43f-1983bea5f775",
+              "name": "userId",
+              "value": "={{ $('LINE Webhook').item.json.body.events[0].source.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "938ef347-9d94-4bbf-8658-61ea39304f18",
+              "name": "joinKey",
+              "value": "={{ $json.joinKey && $json.joinKey !== '' \n     ? $json.joinKey \n     : (Date.now().toString(36) + ':' + $json.userId.toString().slice(-6)) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1776,
+        4096
+      ],
+      "id": "8dd1171b-1e25-443c-ade2-e6cf61cba920",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=customer_master",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "userId",
+              "lookupValue": "={{$json.body.events[0].source.userId}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        4064
+      ],
+      "id": "f7626d08-7c77-41ee-87b7-90b10bc945c1",
+      "name": "customer_get",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f460e63-9cf7-47dc-b53c-f0479b5d543f",
+              "name": "formUrl",
+              "value": "={{ 'https://docs.google.com/forms/d/e/1FAIpQLScSSX0ETDLFrrUqI2vr1_vOy_PjF8AMnPosnYYMd4K3IG8wDg/viewform?usp=pp_url&entry.1136694628=' + encodeURIComponent((($json.joinKey ?? '') + '').trim()) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1968,
+        4096
+      ],
+      "id": "bf4d03fd-c155-4626-b095-f4b339f65ffb",
+      "name": "build_form_url"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34626891-69b2-4287-9d11-b7455b0c5168",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2320,
+        4096
+      ],
+      "id": "5a98ca0b-f1d3-4e37-9b1a-845d0794fd14",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "form_liff",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "joinKey": "={{ $json.joinKey }}",
+            "formUrl": "={{ $json.formUrl }}",
+            "issuedAt": "={{ $json.now }}",
+            "used": "=false",
+            "source": "=line",
+            "raw": "={{ JSON.stringify($json) }}",
+            "userId": "={{$json.userId}}"
+          },
+          "matchingColumns": [
+            "joinKey"
+          ],
+          "schema": [
+            {
+              "id": "joinKey",
+              "displayName": "joinKey",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "formUrl",
+              "displayName": "formUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issuedAt",
+              "displayName": "issuedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "used",
+              "displayName": "used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw",
+              "displayName": "raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2144,
+        4096
+      ],
+      "id": "c663b7e2-33db-4cad-8d4a-ebf71d58bf12",
+      "name": "form_liff",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "form_liff",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "joinKey",
+              "lookupValue": "={{ $json['受付番号（joinKey）（説明：自動入力。編集不要）  '] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        3520
+      ],
+      "id": "768aca3d-6e7e-4ded-a59a-88c88628ac8d",
+      "name": "form_liff1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const to = $node[\"Edit Fields1\"].json.userId;\nconst formUrl = ($node[\"build_form_url\"].json.formUrl ?? \"\").toString().trim();\n\nreturn [{\n  json: {\n    to,\n    messages: [{\n      type: \"template\",\n      altText: \"初回登録フォーム\",\n      template: {\n        type: \"buttons\",\n        text: \"初回登録フォームを開く\",\n        actions: [{\n          type: \"uri\",\n          label: \"フォームを開く\",\n          uri: formUrl\n        }]\n      }\n    }]\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2544,
+        4080
+      ],
+      "id": "fcd18548-f341-40ba-b8ba-68fadd633a73",
+      "name": "payload"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "701b2e80-38b3-4432-9099-974e60edaee6",
+              "name": "userId",
+              "value": "={{ $json.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "8abea5a6-1d56-4d51-a5a1-032d1d797010",
+              "name": "=name",
+              "value": "={{ $('Trigger：Google Form').item.json['名前'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4fbe0aac-ca0c-48af-b3d5-85f6afb6ed3f",
+              "name": "=furigana",
+              "value": "={{ $('Trigger：Google Form').item.json['フリガナ'] }}",
+              "type": "string"
+            },
+            {
+              "id": "27498271-e3ec-4516-b020-57585d764ae6",
+              "name": "=phone",
+              "value": "={{ $('Trigger：Google Form').item.json['電話番号'] }}",
+              "type": "string"
+            },
+            {
+              "id": "efc24fa6-89c3-445c-b0d4-9ecfeb483b3e",
+              "name": "=prefecture",
+              "value": "={{ $('Trigger：Google Form').item.json['お住まいの地域'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e679ad09-417c-4a30-9e88-0f4fc903df3d",
+              "name": "=occupation",
+              "value": "={{ $('Trigger：Google Form').item.json['職業'] }}",
+              "type": "string"
+            },
+            {
+              "id": "63f93b4f-8073-4090-8799-92a3341d92c2",
+              "name": "otherOption",
+              "value": "={{ $('Trigger：Google Form').item.json['その他を選択された方はこちらにご記入ください。'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9042580f-3c9c-4117-9761-7aa92be59a8e",
+              "name": "message",
+              "value": "={{ $('Trigger：Google Form').item.json['ご相談内容'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6072d901-2259-4351-8bc4-7ff706d6d34e",
+              "name": "email",
+              "value": "={{ $('Trigger：Google Form').item.json['メールアドレス'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5b03a427-e767-41fb-a9a4-3dab00efe6ad",
+              "name": "joinKey",
+              "value": "={{ $('Trigger：Google Form').item.json['受付番号（joinKey）（説明：自動入力。編集不要）  '] }}",
+              "type": "string"
+            },
+            {
+              "id": "4bf1644b-8d33-4353-a3a8-c14cf28cf60c",
+              "name": "source",
+              "value": "line_form",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        3520
+      ],
+      "id": "3b5705ec-bdf5-484b-93bd-bf8e4ee0d1c1",
+      "name": "merge_form_and_lif"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "form_liff",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "joinKey": "={{ $json.joinKey }}",
+            "used": "TRUE"
+          },
+          "matchingColumns": [
+            "joinKey"
+          ],
+          "schema": [
+            {
+              "id": "joinKey",
+              "displayName": "joinKey",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "formUrl",
+              "displayName": "formUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "issuedAt",
+              "displayName": "issuedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "used",
+              "displayName": "used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "raw",
+              "displayName": "raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        3520
+      ],
+      "id": "70296667-166b-43ce-9cc1-41e9621cb07e",
+      "name": "mark_form_liff_used",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ユーザーID：LINE Webhook から確実に取得\nconst userId = $node[\"LINE Webhook\"].json.body.events[0].source.userId;\n\n// 気遣いメッセージ（GPT 出力）\n// 取れなかったときはデフォルト文言\nconst careText =\n  $node[\"気遣いメッセージ\"].json?.message?.content ||\n  \"ご連絡ありがとうございます。ご予約の変更・キャンセルは、下記のボタンからお手続きください。\";\n\n// 予約フォームURL\nconst reserveUrl = \"https://timerex.net/s/okubo_180c_5ad8/654e7fb0\";\n// お問い合わせフォームURL\nconst contactUrl = \"https://aiolabo.jp/contact/\";\n\nreturn [\n  {\n    json: {\n      to: userId,\n      messages: [\n        // ① AIの気遣いメッセージ\n        {\n          type: \"text\",\n          text: careText,\n        },\n        // ② 固定のボタンテンプレ\n        {\n          type: \"template\",\n          altText: \"予約・お問い合わせフォームのご案内です。\",\n          template: {\n            type: \"buttons\",\n            text: \"予約の新規・変更・キャンセル、その他のお問い合わせは下記ボタンからお願いします。\",\n            actions: [\n              {\n                type: \"uri\",\n                label: \"① 相談予約フォーム\",\n                uri: reserveUrl,\n              },\n              {\n                type: \"uri\",\n                label: \"② お問い合わせフォーム\",\n                uri: contactUrl,\n              },\n            ],\n          },\n        },\n      ],\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        3904
+      ],
+      "id": "eef48050-0999-47a3-a6a1-56df3a097b5a",
+      "name": "payload_予約フォーム"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer HIbgUTGuBeUI0Y8ox8RZ7mJwsHymi2UDb7gjMqEZpsrrOfcJCNya9YJJ149Yc6ILZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXqQJLdHh6xf5/4PyWuwmf1CmPQTiy0h6MfhwtucQXaTgdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1952,
+        3904
+      ],
+      "id": "697ecd12-1f13-4b5e-9604-18f5ec4c389c",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ebc80ad8-6cdd-455d-9ec9-479a978598ce",
+              "name": "spreadsheetId",
+              "value": "1qTzaur4rTS4Z-vz9kFVWp0avHrfxQ_bXrjUijpfUHF4",
+              "type": "string"
+            },
+            {
+              "id": "3d68a66a-92c6-4ad4-a8fd-d85db6517c77",
+              "name": "sheetName",
+              "value": "appointments",
+              "type": "string"
+            },
+            {
+              "id": "dbf39ced-327e-4159-8f67-1f5001366e6d",
+              "name": "lineChannelAccessToken",
+              "value": "RHNyzBYunu2SL3Lhyjj/GZE3hM6JxmBqlT+aPmHRY2W9FjCIyA+a2e8Zm6IQSNUZZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEVNSB7mMDYQM7zWuEmqS2/r7NJO6FVRqgNTZcfMpYDTqAdB04t89/1O/w1cDnyilFU=",
+              "type": "string"
+            },
+            {
+              "id": "c2d1df10-f9a7-4437-bea1-993805d98e99",
+              "name": "lineWebhookUrl",
+              "value": "https://api.line.me/v2/bot/message/push",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "b0a53b0d-1fa6-4b44-8a0e-ec49961da7be",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1888,
+        3536
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "efbe5749-f81b-4b89-84aa-9cec258f6406",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2048,
+        3760
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "IOC4xHIPFuG9HERb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"full_name\": { \"type\": [\"string\", \"null\"], \"description\": \"予約者氏名\" },\n    \"start_at\":  { \"type\": [\"string\", \"null\"], \"description\": \"ISO8601 e.g. 2025-10-28T10:00:00+09:00\" },\n    \"end_at\":    { \"type\": [\"string\", \"null\"] },\n    \"timezone\":  { \"type\": [\"string\", \"null\"] },\n    \"email\":     { \"type\": [\"string\", \"null\"], \"description\": \"予約者のメールアドレス\" },\n    \"meeting_url\": { \"type\": [\"string\", \"null\"], \"description\": \"完全な参加URL\" },\n    \"title\":     { \"type\": [\"string\", \"null\"] },\n    \"raw_time_text\": { \"type\": [\"string\", \"null\"] }\n  },\n  \"required\": [\"full_name\", \"start_at\", \"meeting_url\"]\n}\n"
+      },
+      "id": "8edb2569-011f-4c71-8866-595eb510d5a5",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2192,
+        3760
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Workflow Configuration').first().json.lineWebhookUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer HIbgUTGuBeUI0Y8ox8RZ7mJwsHymi2UDb7gjMqEZpsrrOfcJCNya9YJJ149Yc6ILZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXqQJLdHh6xf5/4PyWuwmf1CmPQTiy0h6MfhwtucQXaTgdB04t89/1O/w1cDnyilFU="
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"to\": \"{{ $('customer_masterからLINE ID取得').first().json.userId }}\", \"messages\": [ { \"type\": \"text\", \"text\": \"Web相談のご予約が明日となりました。\\n\\nお時間や内容に変更・キャンセルがある場合は、ご予約時の確認メールのリンクからお手続きください。\\nメールが見つからない場合は、このLINEにその旨メッセージをお送りください。\\n\\nそれでは明日お会いできますことを楽しみにお待ちしております。\" } ] }",
+        "options": {}
+      },
+      "id": "74037989-9a9c-4eb2-a830-2395c8df066d",
+      "name": "LINE Webhook (前日リマインド)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2688,
+        3360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Workflow Configuration').first().json.lineWebhookUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer HIbgUTGuBeUI0Y8ox8RZ7mJwsHymi2UDb7gjMqEZpsrrOfcJCNya9YJJ149Yc6ILZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXqQJLdHh6xf5/4PyWuwmf1CmPQTiy0h6MfhwtucQXaTgdB04t89/1O/w1cDnyilFU="
+            },
+            {
+              "name": "Content-Type",
+              "value": "=application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $('customer_masterからLINE ID取得').first().json.userId }}\",\n  \"messages\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"こんにちは。Web相談の開始時刻まで1時間となりました。\\n\\nお時間になりましたら、確認メールに記載のオンライン相談用URLからご入室ください。\\nURLが分からない場合は、このLINEにご連絡ください。\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "d7cb7e8b-9081-482c-8d16-91742d4171f0",
+      "name": "LINE Webhook (当日リマインド)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2688,
+        3808
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "=label:TimeRex newer_than:30d",
+          "readStatus": "both"
+        },
+        "options": {}
+      },
+      "id": "52516767-af5f-40da-a9f4-999ded96af52",
+      "name": "TimeRex予約確認メール受信",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        3536
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "siQYZNKJCxoUxGkF",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=（メール本文 原文）\n{{ $json.text || $json.textHtml || $json.snippet || '' }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "あなたは「予約確認メール（plain または HTML）」から情報を厳密に抽出するAIアシスタントです。\n出力は必ずJSON形式（指定されたSchemaに完全一致）とし、本文に存在しない情報を推測して補完することは禁止です。\n本文に存在しない要素はnullで返します。説明文や追加テキストは禁止します。\n\n【抽出対象フィールド】\n- full_name: 予約者の氏名（敬称・肩書・部署名を除外）\n- email: 本文中の予約者メールアドレス。mailto:リンク、<>（）｛｝などに囲まれたアドレスも含む。全角英数を半角に正規化。\n- start_at: 開始日時（ISO8601、例：2025-10-28T10:00:00+09:00）\n- end_at: 終了日時（同上）\n- timezone: タイムゾーン識別子（例：Asia/Tokyo）\n- meeting_url: Teams／Zoom／Meetなどの参加URL。本文中の「参加」や「Join」に近いURLを優先。\n- title: 件名（イベントタイトル）\n- raw_time_text: 本文中に書かれた元の日時表記\n\n【抽出ルール】\n1. 日付と時刻が分かれて記載されている場合は結合してISO8601化。\n2. 明記がない場合はAsia/Tokyo(+09:00)を前提。\n3. メール署名・注意書き・返信引用文（>）は除外。\n4. 複数のメールアドレスがある場合は、予約者本人のものを優先。\n5. 不明な場合はnull。\n\n【メールアドレス抽出補足】\n- mailto:taro@example.com → taro@example.com\n- <taro@example.com> → taro@example.com\n- （taro＠example.com） → taro@example.com（＠を@に変換）\n- 不正形式・破損文字列は無視してnull。\n\n【日時抽出補足】\n- 日本語日時をISO形式に変換。例：「10月28日(火)10:00-11:00」→ start_at=2025-10-28T10:00:00+09:00, end_at=2025-10-28T11:00:00+09:00\n- 日付しかない場合は時間はnull。\n\n【出力フォーマット】\nSchemaで指定されたキーのみ出力。追加情報や説明は禁止。\n"
+        }
+      },
+      "id": "7014c969-6dc3-405e-bfa6-1504a0951a5e",
+      "name": "メール情報抽出AI",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        3536
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qTzaur4rTS4Z-vz9kFVWp0avHrfxQ_bXrjUijpfUHF4",
+          "mode": "list",
+          "cachedResultName": "AIOLABO_予約台帳",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qTzaur4rTS4Z-vz9kFVWp0avHrfxQ_bXrjUijpfUHF4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 861095629,
+          "mode": "list",
+          "cachedResultName": "appointments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qTzaur4rTS4Z-vz9kFVWp0avHrfxQ_bXrjUijpfUHF4/edit#gid=861095629"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "full_name": "={{ $('メール情報抽出AI').item.json.output.full_name }}",
+            "start_at": "={{ $('メール情報抽出AI').item.json.output.start_at }}",
+            "end_at": "={{ $('メール情報抽出AI').item.json.output.end_at }}",
+            "timezone": "={{ $('メール情報抽出AI').item.json.output.timezone }}",
+            "meeting_url": "={{ $('メール情報抽出AI').item.json.output.meeting_url }}",
+            "title": "={{ $('メール情報抽出AI').item.json.output.timezone }}",
+            "raw_time_text": "={{ $('メール情報抽出AI').item.json.output.raw_time_text }}",
+            "email": "={{ $('メール情報抽出AI').item.json.output.email }}",
+            "line_user_id": "” ”",
+            "reminded_1d_before": "” ”",
+            "reminded_1h_before": "” ”",
+            "userId": "={{ $json.userId }}"
+          },
+          "matchingColumns": [
+            "meeting_url"
+          ],
+          "schema": [
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "start_at",
+              "displayName": "start_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "end_at",
+              "displayName": "end_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timezone",
+              "displayName": "timezone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "meeting_url",
+              "displayName": "meeting_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw_time_text",
+              "displayName": "raw_time_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_user_id",
+              "displayName": "line_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminded_1d_before",
+              "displayName": "reminded_1d_before",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminded_1h_before",
+              "displayName": "reminded_1h_before",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f20b71c9-fb8e-4034-a4a4-49aa9891013d",
+      "name": "予約台帳へ Upsert",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2496,
+        3536
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p8OozizTKv71HLR0",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// === 予約日時計算（全文置換）===\n// 入力はどちらでも可：\n//  - $json.start_at / end_at / timezone\n//  - $json.output.start_at / end_at / timezone\n\nconst j = $json;\n\nconst startRaw = j.start_at ?? j.output?.start_at ?? null;\nconst endRaw   = j.end_at   ?? j.output?.end_at   ?? null;\nconst tz       = j.timezone ?? j.output?.timezone ?? 'Asia/Tokyo';\n\nif (!startRaw) {\n  throw new Error('start_at is missing');\n}\n\nconst start = new Date(startRaw);\nif (isNaN(start.getTime())) {\n  throw new Error(`start_at is invalid: ${startRaw}`);\n}\n\nconst end = endRaw ? new Date(endRaw) : null;\nif (endRaw && isNaN(end.getTime())) {\n  throw new Error(`end_at is invalid: ${endRaw}`);\n}\n\n// ---- ここからリマインド時間計算（Asia/Tokyo 前提）----\n\n// JSTオフセット（分）\nconst JST_OFFSET_MIN = 9 * 60;\n\n// 開始日時を「JSTのカレンダー時間」として扱う\nconst startJstMs = start.getTime() + JST_OFFSET_MIN * 60 * 1000;\nconst startJst = new Date(startJstMs);\n\n// 前日18:00 JST\nconst prev18Jst = new Date(startJst);\nprev18Jst.setDate(prev18Jst.getDate() - 1);\nprev18Jst.setHours(18, 0, 0, 0);\n\n// 当日1時間前 JST\nconst oneHourBeforeJst = new Date(startJst);\noneHourBeforeJst.setHours(oneHourBeforeJst.getHours() - 1);\n\n// Wait ノード用に UTC に戻す\nconst prev18Utc = new Date(prev18Jst.getTime() - JST_OFFSET_MIN * 60 * 1000);\nconst oneHourBeforeUtc = new Date(oneHourBeforeJst.getTime() - JST_OFFSET_MIN * 60 * 1000);\n\n// ---- 補助フラグ ----\nconst now = new Date();\nconst ms = 60 * 1000;\n\nconst minutes_until_start =\n  Math.round((start.getTime() - now.getTime()) / ms);\n\nconst within_24h =\n  (start.getTime() - now.getTime()) > 0 &&\n  (start.getTime() - now.getTime()) <= 24 * 60 * ms;\n\n// ---- 返却 ----\nreturn [{\n  tz,\n  start_at_src: startRaw,\n  start_at_iso: start.toISOString(),\n  end_at_iso: end ? end.toISOString() : null,\n\n  // リマインド用（Wait ノードでそのまま使う）\n  remind_prev18_iso: prev18Utc.toISOString(),      // 前日18:00 JST 相当\n  morning_at_iso:    oneHourBeforeUtc.toISOString(), // 当日1時間前 JST 相当\n\n  // チェック用\n  minutes_until_start,\n  within_24h,\n  now_iso: now.toISOString(),\n  is_before_prev18: now.getTime() < prev18Utc.getTime(),\n  is_between_prev18_and_start:\n    now.getTime() >= prev18Utc.getTime() && now.getTime() < start.getTime(),\n}];\n"
+      },
+      "id": "b795d7ad-cb48-41cb-9ce5-88edee94bdb3",
+      "name": "予約日時計算",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        3536
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{$(\"TimeRex予約確認メール受信\").item.json.id}}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1888,
+        3360
+      ],
+      "id": "e7018ea5-1978-4514-aad1-d5b306fd6fc1",
+      "name": "Mark a message as read",
+      "webhookId": "8edfa74c-59de-46f7-9a54-eb859df6b0a0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "siQYZNKJCxoUxGkF",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{$json.remind_prev18_iso}}"
+      },
+      "id": "bce7a2a3-a244-485e-aa66-848642dbabe2",
+      "name": "Wait (前日18:00)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        3360
+      ],
+      "webhookId": "e0b24077-61f7-4f41-afc5-74d43eb540ba"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{$json.morning_at_iso}}"
+      },
+      "id": "5e59a971-e9fa-4ca9-9f8f-f0c74b93e77b",
+      "name": "Wait (当日１時間前)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        3808
+      ],
+      "webhookId": "0fd927f2-1c29-47cb-b6e9-bfdadf5e2169"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fa19UI9HO-Seezu0L5YXk4cf5gBYfHhbCxk4jYnMess",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "customer_master",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "email",
+              "lookupValue": "={{$node[\"メール情報抽出AI\"].json.output.email}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2336,
+        3536
+      ],
+      "id": "e6faf015-0e7d-46e5-bf7a-b6a537ed694b",
+      "name": "customer_masterからLINE ID取得",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TU2RyxW0ifboSTHT",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=あなたは「AI OLABO」の窓口担当AIです。\n\n【主な役割】\n1. 相談予約のキャンセル・日時変更の一次受付\n2. AI活用や業務効率化など、当社サービス範囲の一般的な質問への回答\n3. 必要に応じて Web 相談フォームへの案内\n\n【意図の分類（最重要）】\nユーザーのメッセージから、必ず次のどれか１つに分類して対応します。\n- 新規予約\n- 予約のキャンセル\n- 予約日時の変更\n- 上記以外の一般的な質問\n\nメッセージに「キャンセル」「取り消し」「行けなくなった」などが含まれている場合は、\n会話の途中でも必ず「予約のキャンセル」として扱います。\n一度キャンセルと判断した会話を、新規予約として扱い直してはいけません。\n\n【キャンセル対応ルール】\n- まず「どの予約をキャンセルしたいか」（日付・時間・名前）を確認する。\n- 情報がそろったら、\n  「キャンセルを承りました。」と明確に伝える。\n- その後に案内を付ける場合は、\n  「日程を改めてご希望の場合は、改めてご予約フォームよりお申し込みください。」\n  程度にとどめ、強い営業トークにはしない。\n\n【医療・法律・税務などの専門分野】\n- 一般的な情報やよく知られた対処法を、簡潔に1〜3項目だけ伝える。\n- 具体的な診断・治療・手続きの指示は行わない。\n- 必ず最後に\n  「最終的な判断や対応については、必ず医師・専門家にご相談ください。」\n  と明記する。\n- こうした質問に対して、当社の有料相談への勧誘は行わない。\n\n【その他】\n- 文体は丁寧だがフレンドリーな敬語（〜です／〜ます）。\n- １回の返信は長くなりすぎないようにする。\n",
+              "role": "system"
+            },
+            {
+              "content": "={{$json.body.events[0].message.text}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        944,
+        4272
+      ],
+      "id": "f22622d4-03c4-4751-a34f-fb0d0e68ecc8",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IOC4xHIPFuG9HERb",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8f445fc6-85bd-4610-8843-21471935c823",
+              "leftValue": "={{ $json.body.events[0].message.text }}",
+              "rightValue": "相談予約",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "cbe2e988-ed10-4c8b-9344-4210f098396f",
+              "leftValue": "={{ $json.body.events[0].message.text }}",
+              "rightValue": "予約",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "18d031d1-4926-45c2-a1fc-1908f9ff5415",
+              "leftValue": "={{ $json.body.events[0].message.text }}",
+              "rightValue": "キャンセル",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "41279ade-3f84-44bc-967a-1c745341b2da",
+              "leftValue": "={{ $json.body.events[0].message.text }}",
+              "rightValue": "変更",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        4080
+      ],
+      "id": "8568ebe5-cd03-46b1-bebe-d5375237c5e3",
+      "name": "IF_相談予約か？"
+    },
+    {
+      "parameters": {
+        "jsCode": "const userId   = $node[\"LINE Webhook\"].json.body.events[0].source.userId;\nconst replyTxt = $node[\"Message a model\"].json.message.content;\n\nreturn [\n  {\n    json: {\n      to: userId,\n      messages: [\n        {\n          type: \"text\",\n          text: replyTxt,\n        },\n      ],\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        4272
+      ],
+      "id": "dfd59473-5900-4784-a1d1-18c6e5c8f09a",
+      "name": "payload_AI返信"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer HIbgUTGuBeUI0Y8ox8RZ7mJwsHymi2UDb7gjMqEZpsrrOfcJCNya9YJJ149Yc6ILZZJmxITBq7nf2/u/4npwyHV7+k2Mgk3e95w86a0YlEXqQJLdHh6xf5/4PyWuwmf1CmPQTiy0h6MfhwtucQXaTgdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($node[\"payload_AI返信\"].json) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1504,
+        4272
+      ],
+      "id": "c252c75a-7b46-45bd-a953-b8f098ebdc06",
+      "name": "HTTP_AI返信"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=あなたは「AI OLABO」のLINE受付用AIです。\n\n【目的】\nユーザーの事情に共感しつつ、\n「ご予約の変更・キャンセルは、下のボタンからお手続きください。」\nという趣旨を丁寧に伝える短い文章だけを返します。\n\n【厳守ルール】\n- 予約の変更・キャンセルを、この会話の中で完了させない。\n- 日時や氏名などの詳細情報を聞かない。\n- 必ず文中で「下のボタンからお手続きください」と案内する。\n- 文章は 2〜4 文、です・ます調。\n- 医療・法務・税務など専門分野の判断は行わない。\n  一般論にとどめ、必要な場合は「専門機関へのご相談をおすすめします」と述べる。\n- 出力はテキストのみ。箇条書き・記号は使わない。\n",
+              "role": "system"
+            },
+            {
+              "content": "={{$node[\"LINE Webhook\"].json.body.events[0].message.text}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1376,
+        3904
+      ],
+      "id": "e8ed0932-5a07-46c4-af05-2bb38549d764",
+      "name": "気遣いメッセージ",
+      "credentials": {
+        "openAiApi": {
+          "id": "IOC4xHIPFuG9HERb",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger：Google Form": {
+      "main": [
+        [
+          {
+            "node": "form_liff1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LINE Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF_相談予約か？",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: 初回登録?": {
+      "main": [
+        [
+          {
+            "node": "気遣いメッセージ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "IF: 新規?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: 新規?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "build_form_url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer_get": {
+      "main": [
+        [
+          {
+            "node": "IF: 初回登録?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build_form_url": {
+      "main": [
+        [
+          {
+            "node": "form_liff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "form_liff": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "payload": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "form_liff1": {
+      "main": [
+        [
+          {
+            "node": "merge_form_and_lif",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge_form_and_lif": {
+      "main": [
+        [
+          {
+            "node": "mark_form_liff_used",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mark_form_liff_used": {
+      "main": [
+        [
+          {
+            "node": "upsert_master",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "payload_予約フォーム": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "メール情報抽出AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "メール情報抽出AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "メール情報抽出AI",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TimeRex予約確認メール受信": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "メール情報抽出AI": {
+      "main": [
+        [
+          {
+            "node": "customer_masterからLINE ID取得",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "予約台帳へ Upsert": {
+      "main": [
+        [
+          {
+            "node": "予約日時計算",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "予約日時計算": {
+      "main": [
+        [
+          {
+            "node": "Wait (前日18:00)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait (当日１時間前)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (前日18:00)": {
+      "main": [
+        [
+          {
+            "node": "LINE Webhook (前日リマインド)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (当日１時間前)": {
+      "main": [
+        [
+          {
+            "node": "LINE Webhook (当日リマインド)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer_masterからLINE ID取得": {
+      "main": [
+        [
+          {
+            "node": "予約台帳へ Upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF_相談予約か？": {
+      "main": [
+        [
+          {
+            "node": "customer_get",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "payload_AI返信",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "payload_AI返信": {
+      "main": [
+        [
+          {
+            "node": "HTTP_AI返信",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "気遣いメッセージ": {
+      "main": [
+        [
+          {
+            "node": "payload_予約フォーム",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "20b3a38d-ecc4-4c89-bb7c-2b730cb69095",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7784e6deefc3643326da8d7ad131105e653e80f566fd6cf43823273619021196"
+  },
+  "id": "rR7x6LodNvx2y0aA",
+  "tags": []
+}
